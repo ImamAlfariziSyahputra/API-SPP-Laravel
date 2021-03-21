@@ -136,4 +136,11 @@ class KelasController extends Controller
 
       return response($kelas, 200);
     }
+
+    public function count()
+    {
+      $kelas = Kelas::count();
+
+      return response($kelas, 200);
+    }
 }

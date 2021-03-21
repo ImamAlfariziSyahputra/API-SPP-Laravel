@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -73,9 +73,52 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
       $user = User::findOrFail($id);
-      $user->update($request->all());
 
-      return response()->json($user, 200);
+      if ($request->password == null && $request->new_password == null){
+        $this->validate($request, [
+          'name' => ['required'],
+          // 'email' => ['required','email', 'unique:user'],
+          'role' => ['required'],
+          // 'password' => ['required','min:8'],
+          // 'new_password' => ['confirmed','min:8','different:password'],
+        ]);
+
+        $user->fill([
+          'name' => $request->name,
+          // 'email' => $request->email,
+          'role' => $request->role,
+          'password' => Hash::make($request->new_password),
+        ])->save();
+    
+        return response()->json(['message' => 'Success'], 200);
+      } else {
+        $this->validate($request, [
+          'name' => ['required'],
+          // 'email' => ['required','email', 'unique:user'],
+          'role' => ['required'],
+          'password' => ['required','min:8'],
+          'new_password' => ['confirmed','min:8','different:password'],
+        ]);
+        // --------------BUAT CHANGE PASSWORD USER------------------------------
+        // if (!Hash::check($request['old_password'], Auth::user()->password)) {
+        //   return response()->json(['error' => ['The old password does not match our records.'] ]);
+        // }
+      
+        if (Hash::check($request->password, $user->password)) { 
+          $user->fill([
+            'name' => $request->name,
+            // 'email' => $request->email,
+            'role' => $request->role,
+            'password' => Hash::make($request->new_password),
+          ])->save();
+      
+          return response()->json(['message' => 'Success'], 200);
+        } else {
+          return response()->json(
+            ['errors' => ['old_password' => 'The old password does not match our records.']], 422
+          );
+        }
+      }
     }
 
     /**

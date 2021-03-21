@@ -14,6 +14,9 @@ Route::post('/logout', 'LoginController@logout');
 Route::group(['namespace' => 'Api'], function() {
 
   Route::get('/users', 'UserController@index');
+  Route::post('/users', 'RegisterController@register');
+  Route::put('/users/{id}', 'UserController@update');
+  Route::delete('/users/{id}', 'UserController@destroy');
 
   Route::get('/majors', 'JurusanController@index');
   Route::post('/majors', 'JurusanController@store');
@@ -21,6 +24,7 @@ Route::group(['namespace' => 'Api'], function() {
   Route::delete('/majors/{id}', 'JurusanController@destroy');
 
   Route::get('/classrooms', 'KelasController@index');
+  Route::get('/classrooms/count', 'KelasController@count');
   Route::post('/classrooms', 'KelasController@store');
   Route::put('/classrooms/{id}', 'KelasController@update');
   Route::delete('/classrooms/{id}', 'KelasController@destroy');
@@ -31,6 +35,7 @@ Route::group(['namespace' => 'Api'], function() {
   Route::delete('/transactions/{id}', 'PembayaranController@destroy');
 
   Route::get('/students', 'SiswaController@index');
+  Route::get('/students/count', 'SiswaController@count');
   Route::post('/students', 'SiswaController@store');
   Route::put('/students/{id}', 'SiswaController@update');
   Route::delete('/students/{id}', 'SiswaController@destroy');

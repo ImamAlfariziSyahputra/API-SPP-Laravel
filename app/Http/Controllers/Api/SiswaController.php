@@ -142,4 +142,11 @@ class SiswaController extends Controller
 
       return response($siswa, 200);
     }
+
+    public function count()
+    {
+      $siswa = Siswa::count();
+
+      return response($siswa, 200);
+    }
 }
