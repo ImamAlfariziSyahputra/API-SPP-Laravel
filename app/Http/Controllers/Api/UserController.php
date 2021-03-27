@@ -19,6 +19,11 @@ class UserController extends Controller
       return User::all();
     }
 
+    public function authUser()
+    {
+      return Auth::user();
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -73,6 +78,7 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
       $user = User::findOrFail($id);
+      // dd($user);
 
       if ($request->password == null && $request->new_password == null){
         $this->validate($request, [

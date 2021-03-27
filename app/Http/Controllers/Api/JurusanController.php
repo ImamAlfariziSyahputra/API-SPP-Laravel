@@ -19,6 +19,13 @@ class JurusanController extends Controller
       return Jurusan::all();
     }
 
+    public function count()
+    {
+      $jurusan = Jurusan::count();
+
+      return response($jurusan, 200);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
