@@ -106,7 +106,9 @@ class PembayaranController extends Controller
           ->join("siswa", "siswa.id", "=", "pembayaran.nisn")
           ->join("spp", "spp.id", "=", "pembayaran.id_spp")
           ->select('pembayaran.*', 
-                    'siswa.id as nisn', 'user.name as nama_petugas', 'spp.nominal as spp')
+                    'siswa.id as nisn',
+                    'siswa.nama as nama_siswa',
+                    'user.name as nama_petugas', 'spp.nominal as spp')
           ->where('status', 2)
           ->get();
 

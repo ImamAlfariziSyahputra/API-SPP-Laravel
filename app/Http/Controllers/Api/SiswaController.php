@@ -81,16 +81,44 @@ class SiswaController extends Controller
       // info($id);
 
       $siswa = Siswa::findOrFail($id);
-      $siswa->update($request->all());
+      $user = User::where([
+        'name' => $siswa->nama,
+      ]);
+
+      $siswa = $siswa->update([
+          'id' => $request->id,
+          'nis' => $request->nis,
+          'nama' => $request->nama,
+          'id_kelas' => $request->id_kelas,
+          'alamat' => $request->alamat,
+          'no_telp' => $request->no_telp
+        ]);
+
+      $user = $user->update([
+        'name' => $request->nama,
+      ]);
+
+      // $siswa->update($request->all());
 
       return response()->json($siswa, 200);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+      // return [$request, $id];
       $siswa = Siswa::where('id', $id)->delete();
+      $user = User::where('name', $request->nama)->delete();
 
-      return response($siswa, 200);
+      // $user = User::where([
+      //   'name' => $request->nama
+      // ])->delete();
+
+      // DB::table("siswa")->where("id", $id)->delete();
+      // DB::table("user")->where("name", $request->nama)->delete();
+
+      // return $user;
+
+      return response(["Message" => "Success"], 200);
     }
 
     public function count()

@@ -16,10 +16,13 @@ Route::group(['namespace' => 'Api'], function() {
   // USER
   Route::get('/users', 'UserController@index');
   Route::get('/authuser', 'UserController@authuser');
+  Route::get('/users/count', 'UserController@count');
   Route::post('/users', 'RegisterController@register');
   Route::put('/users/{id}', 'UserController@update');
   Route::delete('/users/{id}', 'UserController@destroy');
 
+  Route::post('/users/postimage', 'UserController@postImage');
+  
   // MAJOR
   Route::get('/majors', 'JurusanController@index');
   Route::get('/majors/count', 'JurusanController@count');
@@ -40,7 +43,7 @@ Route::group(['namespace' => 'Api'], function() {
   Route::get('/students/count', 'SiswaController@count');
   Route::post('/students', 'SiswaController@store');
   Route::put('/students/{id}', 'SiswaController@update');
-  Route::delete('/students/{id}', 'SiswaController@destroy');
+  Route::put('/students/delete/{id}', 'SiswaController@destroy');
 
   // SPP
   Route::get('/tuitions', 'SppController@index');

@@ -6,6 +6,7 @@ use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Siswa;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -89,7 +90,7 @@ class UserController extends Controller
         //   return response()->json(['error' => ['The old password does not match our records.'] ]);
         // }
         // $hashed_new_password = Hash::make($request->password);
-        // return $hashed_new_password;
+        // return [$hashed_new_password, $request->password];
         if (Hash::check($request->password, $user->password)) { 
           $user->fill([
             'name' => $request->name,
@@ -112,5 +113,40 @@ class UserController extends Controller
       $user = User::where('id', $id)->delete();
 
       return response($user, 200);
+    }
+
+    public function count()
+    {
+      $user = User::where([
+        'is_online' => 1,
+      ])->count();
+
+      return response($user, 200);
+    }
+
+    public function postImage(Request $request)
+    {
+      // return $request;
+      // $file = $request->file('file');
+      // $file = $request->file;
+
+      // if ($request->hasFile('file')) {
+      //   return response()->json(['Success' => 'From HasFile'], 200);
+      // }
+      // return response()->json(['image' => $file], 200);
+
+      $filename = $request->file('file')->getClientOriginalName();
+      $filename = $request->file->getClientOriginalName();
+
+      // return response()->json(['request' => $filename], 200);
+
+      $id = Auth::user()->id;
+      // return response()->json(['id' => $id], 200);
+      $user = User::where('id', $id)->first();
+
+      $user->image = $filename;
+      $user->update();
+
+      return response()->json(['request' => '$request'], 200);
     }
 }
