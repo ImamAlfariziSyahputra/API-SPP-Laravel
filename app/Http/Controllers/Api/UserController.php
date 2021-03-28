@@ -5,15 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Siswa;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
       return User::all();
@@ -24,63 +20,35 @@ class UserController extends Controller
       return Auth::user();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
       $user = User::create($request->all());
       return response()->json($user, 200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function update(Request $request, $id)
     {
       $user = User::findOrFail($id);
-      // dd($user);
 
-      if ($request->password == null && $request->new_password == null){
+      if ($request->password == null && $request->new_password == null){ // CUMA GANTI NAMA DAN ROLE
         $this->validate($request, [
           'name' => ['required'],
           // 'email' => ['required','email', 'unique:user'],
@@ -88,6 +56,12 @@ class UserController extends Controller
           // 'password' => ['required','min:8'],
           // 'new_password' => ['confirmed','min:8','different:password'],
         ]);
+
+        if($user->role == 'student') {
+          $siswa = Siswa::where('nama', $request->old_name)
+                          ->update(['nama' => $request->name]);
+          // return $siswa;
+        }
 
         $user->fill([
           'name' => $request->name,
@@ -97,7 +71,7 @@ class UserController extends Controller
         ])->save();
     
         return response()->json(['message' => 'Success'], 200);
-      } else {
+      } else { // GANTI SEMUA DATA AUTH
         $this->validate($request, [
           'name' => ['required'],
           // 'email' => ['required','email', 'unique:user'],
@@ -105,11 +79,17 @@ class UserController extends Controller
           'password' => ['required','min:8'],
           'new_password' => ['confirmed','min:8','different:password'],
         ]);
+
+        if($user->role == 'student') {
+          $siswa = Siswa::where('nama', $request->name)
+                        ->update(['nama' => $request->name]);
+        }
         // --------------BUAT CHANGE PASSWORD USER------------------------------
         // if (!Hash::check($request['old_password'], Auth::user()->password)) {
         //   return response()->json(['error' => ['The old password does not match our records.'] ]);
         // }
-      
+        // $hashed_new_password = Hash::make($request->password);
+        // return $hashed_new_password;
         if (Hash::check($request->password, $user->password)) { 
           $user->fill([
             'name' => $request->name,
@@ -127,12 +107,6 @@ class UserController extends Controller
       }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
       $user = User::where('id', $id)->delete();
