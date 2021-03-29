@@ -6,19 +6,23 @@ use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Siswa;
+use Facade\FlareClient\Stacktrace\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
     public function index()
     {
-      return User::all();
+      $user = User::all();
+      return response()->json($user, 200);
     }
 
     public function authUser()
     {
-      return Auth::user();
+      $user= Auth::user();
+      return response()->json($user, 200);
     }
 
     public function create()
@@ -135,18 +139,56 @@ class UserController extends Controller
       // }
       // return response()->json(['image' => $file], 200);
 
-      $filename = $request->file('file')->getClientOriginalName();
-      $filename = $request->file->getClientOriginalName();
+      // $filename = $request->file('file')->getClientOriginalName();
+      // $filename = $request->file->getClientOriginalName();
 
-      // return response()->json(['request' => $filename], 200);
+      // $avatar = $request->file('file');
+      if($request->hasFile('file') && request('file') != '') {
 
-      $id = Auth::user()->id;
-      // return response()->json(['id' => $id], 200);
-      $user = User::where('id', $id)->first();
+        $this->validate($request,[
+          'file'=>'required|mimes:jpeg,jpg,png'
+        ]);
 
-      $user->image = $filename;
-      $user->update();
+        $avatar = $request->file('file');
 
-      return response()->json(['request' => '$request'], 200);
+        // $oldImage = public_path('storage/'.$request->image);;
+
+        // if(File::exists($oldImage)){
+        //     unlink($oldImage);
+        // }
+
+        // $avatar->store('file');
+        // $image = $avatar->move('avatar', $image);
+
+        // $user = User::where('id', Auth::user()->id)->first();
+
+        // return response()->json(['Old Image' => $user], 200);
+        // if($user->image) {
+        //   $oldAvatar = public_path('storage/avatar/'. $user->image);
+
+        //   if(Storage::exists($oldAvatar)){
+        //     unlink($oldAvatar);
+        //   }
+        // }
+        
+
+        $ext = $avatar->getClientOriginalExtension();
+        $thumbnailName = "avatar".Date('YMdhis').'.'.$ext;
+        // $path = $avatar->store('avatar', 'public');
+        $avatar->move('avatar', $thumbnailName);
+
+        // $avatar->store('avatar', 'public'); 
+        // Storage::disk('public')->url('avatar/' . $thumbnailName);
+
+        // return response()->json(['request' => $thumbnailName], 200);
+
+        $user = User::where('id', Auth::user()->id)->update([
+          'image'=> $thumbnailName
+        ]);
+
+        return response()->json(['request' => $user], 200);
+      }
+
+
     }
 }

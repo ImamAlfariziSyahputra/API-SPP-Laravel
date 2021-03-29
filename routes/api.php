@@ -4,7 +4,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    return response()->json($request->user(), 200);
+    // return response()->json([
+    //   $request->user(),
+    //   'success' => true, // true or false
+    //   'message' => "Message about success!",
+    // ], 200);
+    // return $request->user();
 });
 
 Route::post('/register', 'RegisterController@register');
@@ -15,7 +21,7 @@ Route::group(['namespace' => 'Api'], function() {
 
   // USER
   Route::get('/users', 'UserController@index');
-  Route::get('/authuser', 'UserController@authuser');
+  Route::get('/getuser', 'UserController@authuser');
   Route::get('/users/count', 'UserController@count');
   Route::post('/users', 'RegisterController@register');
   Route::put('/users/{id}', 'UserController@update');

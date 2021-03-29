@@ -31,6 +31,7 @@ class RegisterController extends Controller
         'email' => $request->email,
         'password' => Hash::make($request->password),
         'role' => 'student',
+        'is_online' => 0,
       ]);
 
       Siswa::create([
@@ -56,6 +57,7 @@ class RegisterController extends Controller
         'email' => $request->email,
         'password' => Hash::make($request->password),
         'role' => $request->role,
+        'is_online' => 0,
       ]);
 
       return response()->json(['message' => 'Success'], 200);

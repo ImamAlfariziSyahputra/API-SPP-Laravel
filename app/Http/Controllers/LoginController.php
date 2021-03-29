@@ -11,7 +11,7 @@ class LoginController extends Controller
 {
   public function login(Request $request)
   {
-    $request->validate([
+    $validate = $request->validate([
       'email' => ['required'],
       'password' => ['required']
     ]);
@@ -22,13 +22,14 @@ class LoginController extends Controller
       $user->is_online = 1;
       $user->update();
 
-      return response()->json(Auth::user(), 200);
+      return response()->json(["User" => Auth::user()], 200);
     }
 
     throw ValidationException::withMessages([
       'email' => ['The Provided Credentials are incorrect']
     ]);
 
+    return response()->json(['Message' => "Error"], 200);
 
   }
 
